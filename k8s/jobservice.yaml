@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobservice
+  template:
+    metadata:
+      labels:
+        app: jobservice
+    spec:
+      containers:
+        - name: jobservice
+          image: jobservice:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=sqlserver,1433;Database=JobDb;User Id=sa;Password=YourStrong!Pass123;TrustServerCertificate=True;"
+          resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobservice
+spec:
+  selector:
+    app: jobservice
+  ports:
+    - port: 8080
+      targetPort: 8080

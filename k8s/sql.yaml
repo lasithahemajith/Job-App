@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlserver
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+    spec:
+      containers:
+        - name: sqlserver
+          image: mcr.microsoft.com/azure-sql-edge
+          ports:
+            - containerPort: 1433
+          env:
+            - name: SA_PASSWORD
+              value: "YourStrong!Pass123"
+            - name: ACCEPT_EULA
+              value: "Y"
+          resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlserver
+spec:
+  selector:
+    app: sqlserver
+  ports:
+    - port: 1433
+      targetPort: 1433
