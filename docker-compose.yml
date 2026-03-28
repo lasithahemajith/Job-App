@@ -1,0 +1,43 @@
+﻿services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - SA_PASSWORD=YourStrong!Pass123
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    networks:
+      - jobnet
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong!Pass123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  jobservice:
+    build:
+      context: ./JobService/JobService
+    container_name: jobservice
+    ports:
+      - "5001:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - jobnet
+
+  apigateway:
+    build:
+      context: ./ApiGateway/ApiGateway
+    container_name: apigateway
+    ports:
+      - "5000:8080"
+    depends_on:
+      - jobservice
+    networks:
+      - jobnet
+
+networks:
+  jobnet:
+    driver: bridge
