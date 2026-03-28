@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: sqlserver
-          image: mcr.microsoft.com/azure-sql-edge
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 1433
           env:
@@ -22,11 +23,15 @@ spec:
               value: "YourStrong!Pass123"
             - name: ACCEPT_EULA
               value: "Y"
+            - name: MSSQL_MEMORY_LIMIT_MB
+              value: "512"
           resources:
             requests:
               memory: "256Mi"
+              cpu: "250m"
             limits:
               memory: "512Mi"
+              cpu: "500m"
 ---
 apiVersion: v1
 kind: Service

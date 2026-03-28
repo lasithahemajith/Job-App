@@ -15,6 +15,7 @@ spec:
       containers:
         - name: jobservice
           image: jobservice:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
@@ -22,9 +23,11 @@ spec:
               value: "Server=sqlserver,1433;Database=JobDb;User Id=sa;Password=YourStrong!Pass123;TrustServerCertificate=True;"
           resources:
             requests:
-              memory: "256Mi"
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: "512Mi"
+              memory: "256Mi"
+              cpu: "200m"
 ---
 apiVersion: v1
 kind: Service
